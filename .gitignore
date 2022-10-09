@@ -1,0 +1,19 @@
+# Build artifacts
+
+/tflint-ruleset-sheldon
+/dist
+
+# IDEs
+
+/.vscode
+/*.code-workspace
+
+# Linters
+
+/.trunk/**/*
+!/.trunk
+!/.trunk/trunk.yaml
+
+# Temporary files
+
+.temp

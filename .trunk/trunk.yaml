@@ -1,0 +1,8 @@
+version: 0.1
+cli:
+  version: 0.16.1-beta
+lint:
+  enabled:
+    - gofmt@1.16.7
+    - golangci-lint@1.46.2
+    - markdownlint@0.32.1

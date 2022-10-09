@@ -1,21 +1,20 @@
 package main
 
 import (
+	"github.com/0x416e746f6e/tflint-ruleset-sheldon/custom"
+	"github.com/0x416e746f6e/tflint-ruleset-sheldon/project"
+	"github.com/0x416e746f6e/tflint-ruleset-sheldon/rules"
 	"github.com/terraform-linters/tflint-plugin-sdk/plugin"
 	"github.com/terraform-linters/tflint-plugin-sdk/tflint"
-	"github.com/terraform-linters/tflint-ruleset-template/rules"
 )
 
 func main() {
 	plugin.Serve(&plugin.ServeOpts{
-		RuleSet: &tflint.BuiltinRuleSet{
-			Name:    "template",
-			Version: "0.1.0",
-			Rules: []tflint.Rule{
-				rules.NewAwsInstanceExampleTypeRule(),
-				rules.NewAwsS3BucketExampleLifecycleRule(),
-				rules.NewGoogleComputeSSLPolicyRule(),
-				rules.NewTerraformBackendTypeRule(),
+		RuleSet: &custom.RuleSet{
+			BuiltinRuleSet: tflint.BuiltinRuleSet{
+				Name:    project.Name,
+				Version: project.Version,
+				Rules:   rules.All(),
 			},
 		},
 	})
