@@ -36,6 +36,7 @@ func New() *Config {
 			{Kind: "google_compute_network_endpoint_group", Keys: []string{"project", "zone", "name"}},
 			{Kind: "google_compute_network", Keys: []string{"project", "name"}},
 			{Kind: "google_compute_region_instance_group_manager", Keys: []string{"project", "region", "name"}},
+			{Kind: "google_compute_region_network_endpoint_group", Keys: []string{"project", "region", "name"}},
 			{Kind: "google_compute_route", Keys: []string{"project", "name"}},
 			{Kind: "google_compute_router_nat", Keys: []string{"project", "region", "name"}},
 			{Kind: "google_compute_router", Keys: []string{"project", "region", "name"}},
