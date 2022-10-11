@@ -439,8 +439,7 @@ const (
 	dontIsolateMultiliners
 )
 
-// checkLeadingSpace inspects the empty space in front of the first node inside
-// the parent's range.
+// checkMiddleSpace inspects the contents in-between the nodes.
 func (r *SpacingRule) checkMiddleSpace(
 	runner tflint.Runner,
 	src []byte,
@@ -550,6 +549,8 @@ func (r *SpacingRule) checkTrailingSpace(
 	return nil
 }
 
+// checkLines inspects the content within a range from the blank-line
+// perspective (taking into consideration the comments).
 func (r *SpacingRule) checkLines(
 	runner tflint.Runner,
 	src []byte,

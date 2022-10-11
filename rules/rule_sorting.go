@@ -9,6 +9,7 @@ import (
 	"github.com/0x416e746f6e/tflint-ruleset-sheldon/node"
 	"github.com/0x416e746f6e/tflint-ruleset-sheldon/project"
 	"github.com/0x416e746f6e/tflint-ruleset-sheldon/visit"
+	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/terraform-linters/tflint-plugin-sdk/tflint"
 )
@@ -60,13 +61,14 @@ func (r *SortingRule) Check(rr tflint.Runner) error {
 		return fmt.Errorf("unexpected runner type: %s", reflect.TypeOf(rr))
 	}
 
-	return visit.Files(r, runner, func(b *hclsyntax.Body, _ []byte) error {
-		return r.checkNodes(runner, 0, node.OrderedInspecableNodesFrom(b))
+	return visit.Files(r, runner, func(b *hclsyntax.Body, src []byte) error {
+		return r.checkNodes(runner, src, 0, node.OrderedInspecableNodesFrom(b))
 	})
 }
 
 func (r *SortingRule) checkNodes(
 	runner *custom.Runner,
+	src []byte,
 	level int,
 	nodes []node.InspectableNode,
 ) error {
@@ -128,25 +130,31 @@ func (r *SortingRule) checkNodes(
 		}
 
 		// Enforce sorting of multi-liners regardless of spacing between them
+		// (but only if there are no comments between them)
 		if level > 0 &&
 			p.Lines() > 1 &&
 			n.Lines() > 1 &&
 			n.Name() < p.Name() {
 			// ---
-			if err := runner.EmitIssue(
-				r,
-				fmt.Sprintf(
-					"%s `%s` should be placed after `%s` (alphabetical sorting)",
-					p.Type(),
-					p.Name(),
-					n.Name(),
-				),
-				p.Range(),
-			); err != nil {
+			hasComments, err := r.hasCommentsInBetween(src, p, n)
+			if err != nil {
 				return err
 			}
+			if !hasComments {
+				if err := runner.EmitIssue(
+					r,
+					fmt.Sprintf(
+						"%s `%s` should be placed after `%s` (alphabetical sorting)",
+						p.Type(),
+						p.Name(),
+						n.Name(),
+					),
+					p.Range(),
+				); err != nil {
+					return err
+				}
+			}
 		}
-
 	}
 
 	// Step inside
@@ -156,7 +164,7 @@ func (r *SortingRule) checkNodes(
 				return err
 			}
 		} else if b := n.AsBlock(); b != nil {
-			if err := r.checkBlock(runner, level+1, b); err != nil {
+			if err := r.checkBlock(runner, src, level+1, b); err != nil {
 				return err
 			}
 		}
@@ -167,6 +175,7 @@ func (r *SortingRule) checkNodes(
 
 func (r *SortingRule) checkBlock(
 	runner *custom.Runner,
+	src []byte,
 	level int,
 	b *hclsyntax.Block,
 ) error {
@@ -191,7 +200,7 @@ func (r *SortingRule) checkBlock(
 		// Top-level `resource` or `data` block
 		if b.Type == "resource" || b.Type == "data" {
 			var err error
-			nodes, err = r.preprocessResourceOrData(runner, level, b.Labels[0], nodes)
+			nodes, err = r.preprocessResourceOrData(runner, src, level, b.Labels[0], nodes)
 			if err != nil {
 				return err
 			}
@@ -207,7 +216,7 @@ func (r *SortingRule) checkBlock(
 		}
 	}
 
-	if err := r.checkNodes(runner, level+1, nodes); err != nil {
+	if err := r.checkNodes(runner, src, level+1, nodes); err != nil {
 		return err
 	}
 
@@ -216,6 +225,7 @@ func (r *SortingRule) checkBlock(
 
 func (r *SortingRule) preprocessResourceOrData(
 	runner *custom.Runner,
+	src []byte,
 	level int,
 	kind string,
 	nodes []node.InspectableNode,
@@ -306,7 +316,7 @@ func (r *SortingRule) preprocessResourceOrData(
 				}
 			}
 			// Step inside
-			if err := r.checkNodes(runner, level+1, knodes); err != nil {
+			if err := r.checkNodes(runner, src, level+1, knodes); err != nil {
 				return nil, err
 			}
 		}
@@ -476,4 +486,42 @@ func (r *SortingRule) checkParenthesesExpr(
 ) error {
 	// Step inside
 	return r.checkExpression(runner, level+1, x.Expression, opt)
+}
+
+func (r *SortingRule) hasCommentsInBetween(
+	src []byte,
+	p node.Node,
+	n node.Node,
+) (bool, error) {
+	rng := hcl.Range{
+		Filename: n.Range().Filename,
+		Start: hcl.Pos{
+			Line:   p.Range().End.Line,
+			Column: p.Range().End.Column,
+			Byte:   p.Range().End.Byte,
+		},
+		End: hcl.Pos{
+			Line:   n.Range().Start.Line,
+			Column: n.Range().Start.Column,
+			Byte:   n.Range().Start.Byte,
+		},
+	}
+
+	tokens, err := hclsyntax.LexConfig(
+		src[rng.Start.Byte:rng.End.Byte],
+		rng.Filename,
+		rng.Start,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	for _, t := range tokens {
+		switch t.Type {
+		case hclsyntax.TokenComment:
+			return true, nil
+		}
+	}
+
+	return false, nil
 }
