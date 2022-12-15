@@ -22,6 +22,7 @@ func New() *Config {
 			{Kind: "external", Keys: []string{}},
 			{Kind: "google_cloud_run_service_iam_policy", Keys: []string{"project", "location", "service"}},
 			{Kind: "google_cloud_run_service", Keys: []string{"project", "location", "name"}},
+			{Kind: "google_cloud_scheduler_job", Keys: []string{"project", "region", "name"}},
 			{Kind: "google_compute_address", Keys: []string{"project", "region", "name"}},
 			{Kind: "google_compute_backend_service", Keys: []string{"project", "name"}},
 			{Kind: "google_compute_firewall", Keys: []string{"project", "name"}},
