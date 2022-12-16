@@ -20,6 +20,7 @@ func New() *Config {
 	return &Config{
 		Resources: []*Resource{
 			{Kind: "external", Keys: []string{}},
+			{Kind: "google_cloud_run_service_iam_binding", Keys: []string{"project", "location", "service", "role"}},
 			{Kind: "google_cloud_run_service_iam_policy", Keys: []string{"project", "location", "service"}},
 			{Kind: "google_cloud_run_service", Keys: []string{"project", "location", "name"}},
 			{Kind: "google_cloud_scheduler_job", Keys: []string{"project", "region", "name"}},
@@ -53,6 +54,7 @@ func New() *Config {
 			{Kind: "google_container_registry", Keys: []string{"project", "location"}},
 			{Kind: "google_dns_managed_zone", Keys: []string{"project", "name"}},
 			{Kind: "google_dns_record_set", Keys: []string{"project", "managed_zone", "name", "type"}},
+			{Kind: "google_eventarc_trigger", Keys: []string{"project", "location", "name"}},
 			{Kind: "google_iam_policy", Keys: []string{}},
 			{Kind: "google_iap_brand", Keys: []string{"project", "application_title"}},
 			{Kind: "google_iap_client", Keys: []string{"brand"}},
@@ -66,7 +68,10 @@ func New() *Config {
 			{Kind: "google_project_iam_binding", Keys: []string{"project", "role"}}, // TODO: condition.title
 			{Kind: "google_project_iam_custom_role", Keys: []string{"project", "role_id"}},
 			{Kind: "google_project_iam_member", Keys: []string{"project", "role", "member"}},
+			{Kind: "google_project_service_identity", Keys: []string{"project", "service"}},
 			{Kind: "google_project", Keys: []string{"project_id"}},
+			{Kind: "google_pubsub_subscription", Keys: []string{"project", "name"}},
+			{Kind: "google_pubsub_topic", Keys: []string{"project", "name"}},
 			{Kind: "google_secret_manager_secret_iam_member", Keys: []string{"project", "secret_id", "role", "member"}},
 			{Kind: "google_secret_manager_secret_iam_policy", Keys: []string{"project", "secret_id"}},
 			{Kind: "google_secret_manager_secret_version", Keys: []string{"project", "secret"}},
@@ -84,6 +89,8 @@ func New() *Config {
 			{Kind: "google_storage_bucket_iam_member", Keys: []string{"bucket", "role", "member"}},
 			{Kind: "google_storage_bucket_iam_policy", Keys: []string{"bucket", "role"}},
 			{Kind: "google_storage_bucket", Keys: []string{"project", "name"}},
+			{Kind: "google_storage_notification", Keys: []string{"bucket"}},
+			{Kind: "google_storage_project_service_account", Keys: []string{}},
 			{Kind: "google_vpc_access_connector", Keys: []string{"project", "region", "name"}},
 			{Kind: "helm_release", Keys: []string{"namespace", "name"}},
 			{Kind: "http", Keys: []string{"url"}},
