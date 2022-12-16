@@ -15,7 +15,7 @@ type Resource struct {
 	Keys []string `hclext:"key_attributes"`
 }
 
-// New creates a new configuration stucture that is pre-filled with defaults.
+// New creates a new configuration structure that is pre-filled with defaults.
 func New() *Config {
 	return &Config{
 		Resources: []*Resource{
@@ -49,7 +49,7 @@ func New() *Config {
 			{Kind: "google_compute_vpn_gateway", Keys: []string{"project", "region", "name"}},
 			{Kind: "google_compute_vpn_tunnel", Keys: []string{"project", "region", "name"}},
 			{Kind: "google_container_cluster", Keys: []string{"project", "location", "name"}},
-			{Kind: "google_container_node_pool", Keys: []string{"project", "locaion", "cluster", "name"}},
+			{Kind: "google_container_node_pool", Keys: []string{"project", "location", "cluster", "name"}},
 			{Kind: "google_container_registry", Keys: []string{"project", "location"}},
 			{Kind: "google_dns_managed_zone", Keys: []string{"project", "name"}},
 			{Kind: "google_dns_record_set", Keys: []string{"project", "managed_zone", "name", "type"}},

@@ -21,7 +21,7 @@ func parseConfigResource(r *config.Resource) (*Resource, error) {
 		for i := 0; i < len(keys)-1; i++ {
 			if keys[i] != keyBlocks[i] {
 				return nil, fmt.Errorf(
-					"invaid configuration for `%s`: all keys must have the same prefix `%s`: unexpected `%s`",
+					"invalid configuration for `%s`: all keys must have the same prefix `%s`: unexpected `%s`",
 					r.Kind,
 					strings.Join(keyBlocks, "."),
 					strings.Join(keys[:i+1], "."),

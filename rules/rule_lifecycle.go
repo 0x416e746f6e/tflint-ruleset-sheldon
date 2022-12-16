@@ -53,7 +53,7 @@ func (r *LifecycleRule) Check(runner tflint.Runner) error {
 				if lifecycle != nil {
 					return runner.EmitIssue(
 						r,
-						"more than 1 `lifecycle` block fouond",
+						"more than 1 `lifecycle` block found",
 						block.TypeRange,
 					)
 				}
@@ -65,7 +65,7 @@ func (r *LifecycleRule) Check(runner tflint.Runner) error {
 			return nil
 		}
 
-		nodes := node.OrderedInspecableNodesFrom(b.Body)
+		nodes := node.OrderedInspectableNodesFrom(b.Body)
 
 		n := nodes[len(nodes)-1]
 		if n.IsAttribute() && n.Name() == "depends_on" {

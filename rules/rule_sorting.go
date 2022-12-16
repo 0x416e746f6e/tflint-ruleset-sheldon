@@ -62,7 +62,7 @@ func (r *SortingRule) Check(rr tflint.Runner) error {
 	}
 
 	return visit.Files(r, runner, func(b *hclsyntax.Body, src []byte) error {
-		return r.checkNodes(runner, src, 0, node.OrderedInspecableNodesFrom(b))
+		return r.checkNodes(runner, src, 0, node.OrderedInspectableNodesFrom(b))
 	})
 }
 
@@ -179,7 +179,7 @@ func (r *SortingRule) checkBlock(
 	level int,
 	b *hclsyntax.Block,
 ) error {
-	nodes := node.OrderedInspecableNodesFrom(b.Body)
+	nodes := node.OrderedInspectableNodesFrom(b.Body)
 	if len(nodes) == 0 {
 		return nil
 	}
@@ -301,7 +301,7 @@ func (r *SortingRule) preprocessResourceOrData(
 		// Drop the key block, but inspect its contents
 		if kb := nodes[0].AsBlock(); kb != nil && kb.Type == resource.KeyBlocks[level-1] {
 			nodes = nodes[1:] // Drop
-			knodes := node.OrderedInspecableNodesFrom(kb.Body)
+			knodes := node.OrderedInspectableNodesFrom(kb.Body)
 			// Drop leading key attributes inside the key block
 			if len(resource.KeyBlocks) == level {
 				for _, ka := range resource.KeyAttributes {
@@ -412,7 +412,7 @@ func (r *SortingRule) checkObjectConsExpr(
 		if pl > 0 && el == 0 {
 			if err := runner.EmitIssue(
 				r,
-				"singleline key/value pair should be placed before multiline",
+				"single-line key/value pair should be placed before multi-line",
 				e.KeyExpr.Range(),
 			); err != nil {
 				return err

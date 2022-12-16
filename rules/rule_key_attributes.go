@@ -91,7 +91,7 @@ func (r *KeyAttributesRule) Check(rr tflint.Runner) error {
 		}
 
 		pos := 0
-		for _, n := range node.OrderedInspecableNodesFrom(body) {
+		for _, n := range node.OrderedInspectableNodesFrom(body) {
 			if n.IsAttribute() && n.Name() == "for_each" {
 				continue
 			}

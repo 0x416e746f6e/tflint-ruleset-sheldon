@@ -45,7 +45,7 @@ func (r *SpacingRule) Link() string {
 // Check verifies whether all attributes and blocks are properly sorted.
 func (r *SpacingRule) Check(runner tflint.Runner) error {
 	return visit.Files(r, runner, func(b *hclsyntax.Body, src []byte) error {
-		return r.checkNodes(runner, src, 0, node.OrderedInspecableNodesFrom(b), b)
+		return r.checkNodes(runner, src, 0, node.OrderedInspectableNodesFrom(b), b)
 	})
 }
 
@@ -101,7 +101,7 @@ func (r *SpacingRule) checkBlock(
 	level int,
 	b *hclsyntax.Block,
 ) error {
-	nodes := node.OrderedInspecableNodesFrom(b.Body)
+	nodes := node.OrderedInspectableNodesFrom(b.Body)
 
 	// Check the leading empty lines
 	if len(nodes) > 0 {

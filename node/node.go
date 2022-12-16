@@ -159,7 +159,7 @@ func OrderedNodesFrom(b *hclsyntax.Body) []Node {
 	return res
 }
 
-func OrderedInspecableNodesFrom(b *hclsyntax.Body) []InspectableNode {
+func OrderedInspectableNodesFrom(b *hclsyntax.Body) []InspectableNode {
 	res := make(
 		[]InspectableNode,
 		0,
