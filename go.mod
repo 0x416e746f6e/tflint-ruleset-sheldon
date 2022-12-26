@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/hashicorp/hcl/v2 v2.15.0
-	github.com/terraform-linters/tflint-plugin-sdk v0.14.0
+	github.com/terraform-linters/tflint-plugin-sdk v0.15.0
 )
 
 require (
