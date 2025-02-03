@@ -21,7 +21,7 @@ You can install the plugin with `tflint --init`. Declare a config in
 plugin "sheldon" {
   enabled = true
 
-  version = "0.0.5"
+  version = "0.0.6"
   source  = "github.com/0x416e746f6e/tflint-ruleset-sheldon"
 
   signing_key = <<-KEY
