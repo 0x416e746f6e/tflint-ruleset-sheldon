@@ -2,7 +2,6 @@ package rules
 
 import (
 	"fmt"
-	"reflect"
 
 	"github.com/0x416e746f6e/tflint-ruleset-sheldon/custom"
 	"github.com/0x416e746f6e/tflint-ruleset-sheldon/project"
@@ -44,25 +43,26 @@ func (r *UnknownResourceRule) Link() string {
 // Check verifies whether the key-attributes (those that uniquely identify the
 // resource) are put on top of the resource definition.
 func (r *UnknownResourceRule) Check(rr tflint.Runner) error {
-	runner, ok := rr.(*custom.Runner)
-	if !ok {
-		return fmt.Errorf("unexpected runner type: %s", reflect.TypeOf(rr))
+	switch runner := rr.(type) {
+	case *custom.Runner:
+		return visit.Blocks(r, runner, func(b *hclsyntax.Block, _ []byte) error {
+			if b.Type != "resource" && b.Type != "data" {
+				return nil
+			}
+
+			kind := b.Labels[0]
+			if _, kindIsKnown := runner.Resources[kind]; kindIsKnown {
+				return nil
+			}
+
+			return runner.EmitIssue(
+				r,
+				fmt.Sprintf("key-attributes for resource type `%s` are not configured", kind),
+				b.LabelRanges[0],
+			)
+		})
+
+	default:
+		return nil
 	}
-
-	return visit.Blocks(r, runner, func(b *hclsyntax.Block, _ []byte) error {
-		if b.Type != "resource" && b.Type != "data" {
-			return nil
-		}
-
-		kind := b.Labels[0]
-		if _, kindIsKnown := runner.Resources[kind]; kindIsKnown {
-			return nil
-		}
-
-		return runner.EmitIssue(
-			r,
-			fmt.Sprintf("key-attributes for resource type `%s` are not configured", kind),
-			b.LabelRanges[0],
-		)
-	})
 }

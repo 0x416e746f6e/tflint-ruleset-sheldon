@@ -2,7 +2,6 @@ package rules
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/0x416e746f6e/tflint-ruleset-sheldon/custom"
@@ -56,14 +55,15 @@ func (r *SortingRule) Link() string {
 
 // Check verifies whether all attributes and blocks are properly sorted.
 func (r *SortingRule) Check(rr tflint.Runner) error {
-	runner, ok := rr.(*custom.Runner)
-	if !ok {
-		return fmt.Errorf("unexpected runner type: %s", reflect.TypeOf(rr))
-	}
+	switch runner := rr.(type) {
+	case *custom.Runner:
+		return visit.Files(r, runner, func(b *hclsyntax.Body, src []byte) error {
+			return r.checkNodes(runner, src, 0, node.OrderedInspectableNodesFrom(b))
+		})
 
-	return visit.Files(r, runner, func(b *hclsyntax.Body, src []byte) error {
-		return r.checkNodes(runner, src, 0, node.OrderedInspectableNodesFrom(b))
-	})
+	default:
+		return nil
+	}
 }
 
 func (r *SortingRule) checkNodes(
